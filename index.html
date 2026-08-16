@@ -385,3 +385,426 @@
 
 </body>
 </html>
+<!-- =========================================================
+     HINDI AI VOICE STUDIO — UPGRADE
+     इसे अपने पुराने HTML code के सबसे नीचे paste करें
+     ========================================================= -->
+
+<style>
+
+.voice-upgrade {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
+}
+
+.voice-upgrade-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.gender-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.gender-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.male-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.female-btn {
+  background: #db2777;
+  color: white;
+}
+
+.gender-btn.active {
+  outline: 3px solid white;
+}
+
+.download-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #f59e0b;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voice-info {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+</style>
+
+
+<div class="voice-upgrade">
+
+  <div class="voice-upgrade-title">
+    🎙️ Indian Natural Voice
+  </div>
+
+  <div class="gender-buttons">
+
+    <button
+      id="maleVoiceBtn"
+      class="gender-btn male-btn active">
+      👨 Indian Male
+    </button>
+
+    <button
+      id="femaleVoiceBtn"
+      class="gender-btn female-btn">
+      👩 Indian Female
+    </button>
+
+  </div>
+
+  <div
+    id="selectedVoiceInfo"
+    class="voice-info">
+    Indian Male voice खोजी जा रही है...
+  </div>
+
+  <button
+    id="downloadVoiceBtn"
+    class="download-btn">
+    ⬇️ Download Voice
+  </button>
+
+</div>
+
+
+<script>
+
+(function () {
+
+  let selectedGender = "male";
+  let availableVoices = [];
+
+  const maleButton =
+    document.getElementById("maleVoiceBtn");
+
+  const femaleButton =
+    document.getElementById("femaleVoiceBtn");
+
+  const voiceInfo =
+    document.getElementById("selectedVoiceInfo");
+
+  const downloadButton =
+    document.getElementById("downloadVoiceBtn");
+
+
+  function loadIndianVoices() {
+
+    availableVoices =
+      window.speechSynthesis.getVoices();
+
+    updateVoiceInformation();
+
+  }
+
+
+  function getHindiIndianVoices() {
+
+    return availableVoices.filter(function(voice) {
+
+      const lang =
+        (voice.lang || "").toLowerCase();
+
+      return (
+        lang === "hi-in" ||
+        lang.startsWith("hi")
+      );
+
+    });
+
+  }
+
+
+  function findVoice(gender) {
+
+    const hindiVoices =
+      getHindiIndianVoices();
+
+    if (hindiVoices.length === 0) {
+      return null;
+    }
+
+    /*
+      Browser voice names gender clearly नहीं बताते।
+      इसलिए common male/female names से best match
+      खोजने की कोशिश की जा रही है।
+    */
+
+    const maleWords = [
+      "male",
+      "man",
+      "aarav",
+      "arjun",
+      "ravi",
+      "rahul",
+      "amit",
+      "rohit",
+      "aditya",
+      "vishal"
+    ];
+
+    const femaleWords = [
+      "female",
+      "woman",
+      "ananya",
+      "aarti",
+      "kavya",
+      "swara",
+      "divya",
+      "neha",
+      "pooja",
+      "priya"
+    ];
+
+    const words =
+      gender === "male"
+        ? maleWords
+        : femaleWords;
+
+
+    for (const voice of hindiVoices) {
+
+      const name =
+        voice.name.toLowerCase();
+
+      for (const word of words) {
+
+        if (name.includes(word)) {
+          return voice;
+        }
+
+      }
+
+    }
+
+    /*
+      अगर gender पहचान नहीं मिली तो
+      उपलब्ध Hindi voice का पहला विकल्प।
+    */
+
+    return hindiVoices[0];
+
+  }
+
+
+  function updateVoiceInformation() {
+
+    const hindiVoices =
+      getHindiIndianVoices();
+
+    if (hindiVoices.length === 0) {
+
+      voiceInfo.innerHTML =
+        "⚠️ आपके device/browser में Hindi India voice उपलब्ध नहीं मिली।";
+
+      return;
+
+    }
+
+    const selected =
+      findVoice(selectedGender);
+
+    if (selected) {
+
+      voiceInfo.innerHTML =
+        "Selected: <b>" +
+        selected.name +
+        "</b><br>" +
+        "Language: " +
+        selected.lang;
+
+    }
+
+  }
+
+
+  maleButton.addEventListener(
+    "click",
+    function () {
+
+      selectedGender = "male";
+
+      maleButton.classList.add("active");
+      femaleButton.classList.remove("active");
+
+      updateVoiceInformation();
+
+    }
+  );
+
+
+  femaleButton.addEventListener(
+    "click",
+    function () {
+
+      selectedGender = "female";
+
+      femaleButton.classList.add("active");
+      maleButton.classList.remove("active");
+
+      updateVoiceInformation();
+
+    }
+  );
+
+
+  /*
+    पुराने Generate Voice button को override करके
+    selected Male/Female voice इस्तेमाल करना।
+  */
+
+  const oldSpeakButton =
+    document.getElementById("speakBtn");
+
+
+  if (oldSpeakButton) {
+
+    oldSpeakButton.onclick =
+      function () {
+
+        const text =
+          document.getElementById("text").value.trim();
+
+        if (!text) {
+
+          document.getElementById("status").textContent =
+            "पहले Hindi text लिखिए।";
+
+          return;
+
+        }
+
+        window.speechSynthesis.cancel();
+
+        const speech =
+          new SpeechSynthesisUtterance(text);
+
+        speech.lang = "hi-IN";
+
+        speech.rate =
+          Number(
+            document.getElementById("rate").value
+          );
+
+        speech.pitch =
+          Number(
+            document.getElementById("pitch").value
+          );
+
+
+        const selectedVoice =
+          findVoice(selectedGender);
+
+
+        if (selectedVoice) {
+
+          speech.voice =
+            selectedVoice;
+
+        }
+
+
+        speech.onstart =
+          function () {
+
+            document.getElementById("status").textContent =
+              "🔊 " +
+              (selectedGender === "male"
+                ? "Indian Male"
+                : "Indian Female") +
+              " voice चल रही है...";
+
+          };
+
+
+        speech.onend =
+          function () {
+
+            document.getElementById("status").textContent =
+              "✅ Voice complete";
+
+          };
+
+
+        speech.onerror =
+          function () {
+
+            document.getElementById("status").textContent =
+              "❌ Voice में समस्या हुई।";
+
+          };
+
+
+        window.speechSynthesis.speak(speech);
+
+      };
+
+  }
+
+
+  /*
+    IMPORTANT:
+    Browser speechSynthesis का audio सीधे MP3/WAV में
+    export नहीं किया जा सकता।
+
+    इसलिए अभी Download button user को बताता है कि
+    real audio download के लिए TTS backend/API जोड़ना होगा।
+  */
+
+  downloadButton.addEventListener(
+    "click",
+    function () {
+
+      alert(
+        "Download feature के लिए real TTS API/backend जोड़ना जरूरी है। " +
+        "Browser की built-in voice को सीधे MP3/WAV में export नहीं किया जा सकता।"
+      );
+
+    }
+  );
+
+
+  /*
+    Android/Chrome में voices बाद में load हो सकती हैं।
+  */
+
+  window.speechSynthesis.onvoiceschanged =
+    loadIndianVoices;
+
+
+  loadIndianVoices();
+
+})();
+
+                               </script>
