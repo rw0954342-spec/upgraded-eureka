@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hindi Voice AI Studio</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ background:#070b14;
+ color:#fff;
+ font-family:Arial,Helvetica,sans-serif;
+}
+
+.app{
+ min-height:100vh;
+ display:flex;
+}
+
+.sidebar{
+ width:230px;
+ padding:22px 15px;
+ background:#090e19;
+ border-right:1px solid #202b40;
+}
+
+.logo{
+ font-size:22px;
+ font-weight:800;
+ margin-bottom:30px;
+}
+
+.logo span{
+ display:inline-grid;
+ place-items:center;
+ width:38px;
+ height:38px;
+ margin-right:8px;
+ border-radius:12px;
+ background:linear-gradient(135deg,#22d3ee,#8b5cf6);
+}
+
+.nav button{
+ width:100%;
+ border:0;
+ background:transparent;
+ color:#aebbd0;
+ padding:12px;
+ margin:3px 0;
+ border-radius:10px;
+ text-align:left;
+ cursor:pointer;
+}
+
+.nav button.active,
+.nav button:hover{
+ background:#172238;
+ color:white;
+}
+
+.main{
+ flex:1;
+ min-width:0;
+}
+
+.top{
+ height:70px;
+ border-bottom:1px solid #202b40;
+ display:flex;
+ justify-content:flex-end;
+ align-items:center;
+ padding:0 25px;
+ gap:15px;
+}
+
+.avatar{
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ display:grid;
+ place-items:center;
+ background:linear-gradient(135deg,#22d3ee,#8b5cf6);
+}
+
+.content{
+ max-width:1400px;
+ margin:auto;
+ padding:25px;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 360px;
+ gap:20px;
+}
+
+.card{
+ background:#0d1524;
+ border:1px solid #233049;
+ border-radius:18px;
+ padding:20px;
+}
+
+h1{
+ margin:0 0 20px;
+ font-size:25px;
+}
+
+.label{
+ display:flex;
+ justify-content:space-between;
+ color:#aebbd0;
+ font-size:13px;
+ margin-bottom:8px;
+}
+
+textarea{
+ width:100%;
+ min-height:190px;
+ resize:vertical;
+ padding:16px;
+ border-radius:14px;
+ border:1px solid #33415d;
+ outline:none;
+ background:#080e19;
+ color:white;
+ font-size:16px;
+ line-height:1.6;
+}
+
+textarea:focus{
+ border-color:#22d3ee;
+}
+
+.controls{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:13px;
+ margin-top:18px;
+}
+
+select{
+ width:100%;
+ padding:12px;
+ background:#080e19;
+ color:white;
+ border:1px solid #33415d;
+ border-radius:10px;
+}
+
+.range{
+ background:#080e19;
+ border:1px solid #33415d;
+ border-radius:10px;
+ padding:10px;
+}
+
+input[type=range]{
+ width:100%;
+ accent-color:#22d3ee;
+}
+
+.voices{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+ margin-top:18px;
+}
+
+.voice{
+ padding:16px;
+ border-radius:14px;
+ border:1px solid #33415d;
+ background:#0a111e;
+ color:white;
+ text-align:left;
+ cursor:pointer;
+}
+
+.voice.selected{
+ border-color:#22d3ee;
+ background:#102438;
+ box-shadow:0 0 20px rgba(34,211,238,.1);
+}
+
+.voiceIcon{
+ font-size:30px;
+ margin-bottom:8px;
+}
+
+.voiceName{
+ font-weight:800;
+}
+
+.voiceInfo{
+ color:#8fa0b8;
+ font-size:12px;
+ margin-top:5px;
+}
+
+.actions{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:18px;
+}
+
+button.action{
+ border:0;
+ padding:14px;
+ border-radius:11px;
+ color:white;
+ font-weight:800;
+ cursor:pointer;
+}
+
+.generate{
+ background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+.stop{
+ background:linear-gradient(135deg,#dc2626,#ef4444);
+}
+
+.preview{
+ width:100%;
+ margin-top:10px;
+ background:linear-gradient(135deg,#2563eb,#7c3aed);
+}
+
+.status{
+ margin-top:12px;
+ padding:11px;
+ border-radius:10px;
+ background:#080e19;
+ border:1px solid #233049;
+ color:#b9c6d8;
+ font-size:12px;
+}
+
+.wave{
+ height:150px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:4px;
+ overflow:hidden;
+ background:#080e19;
+ border:1px solid #233049;
+ border-radius:14px;
+}
+
+.bar{
+ width:4px;
+ height:18px;
+ border-radius:4px;
+ background:linear-gradient(#22d3ee,#8b5cf6);
+}
+
+.wave.playing .bar{
+ animation:pulse .65s infinite alternate;
+}
+
+@keyframes pulse{
+ from{height:12px}
+ to{height:80px}
+}
+
+.audioBox{
+ margin-top:15px;
+}
+
+audio{
+ width:100%;
+}
+
+.download{
+ width:100%;
+ margin-top:10px;
+ border:0;
+ padding:13px;
+ border-radius:10px;
+ color:white;
+ font-weight:800;
+ background:linear-gradient(135deg,#0891b2,#7c3aed);
+ cursor:pointer;
+}
+
+.download:disabled{
+ opacity:.4;
+ cursor:not-allowed;
+}
+
+.note{
+ color:#7f8da3;
+ font-size:11px;
+ line-height:1.6;
+ margin-top:15px;
+}
+
+@media(max-width:900px){
+ .sidebar{display:none}
+ .grid{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+ .content{padding:10px}
+ .card{padding:15px}
+ .controls{grid-template-columns:1fr}
+ .voices{grid-template-columns:1fr}
+ .actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+ <div class="logo">
+  <span>✦</span> VOICE.AI
+ </div>
+
+ <div class="nav">
+  <button class="active">⌂ Home</button>
+  <button>◉ Voices</button>
+  <button>◈ Voice Cloning</button>
+  <button>▣ Projects</button>
+  <button>☆ Favorites</button>
+ </div>
+
+</aside>
+
+
+<main class="main">
+
+ <header class="top">
+  <span>🔔</span>
+  <div class="avatar">AI</div>
+ </header>
+
+
+ <div class="content">
+
+  <div class="grid">
+
+
+   <!-- LEFT -->
+
+   <section class="card">
+
+    <h1>AI Voice Generator</h1>
+
+
+    <div class="label">
+     <span>Hindi Script</span>
+     <span id="counter">0</span>
+    </div>
+
+    <textarea id="text"
+      placeholder="Enter your Hindi script here...">नमस्ते! यह हमारी Hindi AI Voice testing है। अगर आप सफल होना चाहते हैं, तो हर दिन कुछ नया सीखिए और लगातार अपने लक्ष्य की तरफ आगे बढ़ते रहिए।</textarea>
+
+
+    <div class="controls">
+
+     <div>
+      <div class="label">
+       <span>Language</span>
+      </div>
+
+      <select id="language">
+       <option value="hi-IN">Hindi (India)</option>
+      </select>
+     </div>
+
+
+     <div>
+      <div class="label">
+       <span>Available Browser Voice</span>
+      </div>
+
+      <select id="browserVoice">
+       <option>Searching...</option>
+      </select>
+     </div>
+
+
+     <div>
+      <div class="label">
+       <span>Speed</span>
+       <b id="speedValue">0.95x</b>
+      </div>
+
+      <div class="range">
+       <input id="speed"
+        type="range"
+        min=".6"
+        max="1.4"
+        step=".05"
+        value=".95">
+      </div>
+     </div>
+
+
+     <div>
+      <div class="label">
+       <span>Pitch</span>
+       <b id="pitchValue">1.00</b>
+      </div>
+
+      <div class="range">
+       <input id="pitch"
+        type="range"
+        min=".6"
+        max="1.4"
+        step=".05"
+        value="1">
+      </div>
+     </div>
+
+    </div>
+
+
+    <h3>Voice Selection</h3>
+
+    <div class="voices">
+
+     <button class="voice selected"
+       data-gender="male">
+
+      <div class="voiceIcon">👨🏻</div>
+
+      <div class="voiceName">
+       Indian Male
+      </div>
+
+      <div class="voiceInfo">
+       Natural Hindi Male
+      </div>
+
+     </button>
+
+
+     <button class="voice"
+       data-gender="female">
+
+      <div class="voiceIcon">👩🏻</div>
+
+      <div class="voiceName">
+       Indian Female
+      </div>
+
+      <div class="voiceInfo">
+       Natural Hindi Female
+      </div>
+
+     </button>
+
+    </div>
+
+
+    <div class="actions">
+
+     <button
+       class="action generate"
+       id="generate">
+       ▶ Generate Voice
+     </button>
+
+     <button
+       class="action stop"
+       id="stop">
+       ■ Stop
+     </button>
+
+    </div>
+
+
+    <button
+      class="action preview"
+      id="preview">
+      🔊 Listen / Preview
+    </button>
+
+
+    <div class="status" id="status">
+     Ready.
+    </div>
+
+   </section>
+
+
+   <!-- RIGHT -->
+
+   <aside class="card">
+
+    <h3>Audio Output</h3>
+
+    <div class="wave" id="wave">
+
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+     <i class="bar"></i>
+
+    </div>
+
+
+    <div class="audioBox">
+
+     <audio id="audio"
+       controls
+       style="display:none">
+     </audio>
+
+    </div>
+
+
+    <button
+      class="download"
+      id="mp3"
+      disabled>
+      ⬇ Download MP3
+    </button>
+
+
+    <button
+      class="download"
+      id="wav"
+      disabled>
+      ⬇ Download WAV
+    </button>
+
+
+    <div class="note">
+
+     MP3/WAV download becomes active after
+     the real TTS backend returns an audio file.
+
+     Browser preview works independently.
+
+    </div>
+
+   </aside>
+
+  </div>
+
+ </div>
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   HINDI VOICE ENGINE
+   ========================================================= */
+
+const text =
+ document.getElementById("text");
+
+const counter =
+ document.getElementById("counter");
+
+const browserVoice =
+ document.getElementById("browserVoice");
+
+const speed =
+ document.getElementById("speed");
+
+const pitch =
+ document.getElementById("pitch");
+
+const speedValue =
+ document.getElementById("speedValue");
+
+const pitchValue =
+ document.getElementById("pitchValue");
+
+const status =
+ document.getElementById("status");
+
+const wave =
+ document.getElementById("wave");
+
+const audio =
+ document.getElementById("audio");
+
+const mp3 =
+ document.getElementById("mp3");
+
+const wav =
+ document.getElementById("wav");
+
+let voices = [];
+
+let gender =
+ "male";
+
+let audioBlob =
+ null;
+
+
+/* COUNTER */
+
+function updateCounter(){
+
+ counter.textContent =
+   text.value.length +
+   " characters";
+
+}
+
+text.addEventListener(
+ "input",
+ updateCounter
+);
+
+updateCounter();
+
+
+/* SLIDERS */
+
+speed.addEventListener(
+ "input",
+ ()=>{
+  speedValue.textContent =
+   Number(speed.value).toFixed(2)+"x";
+ }
+);
+
+pitch.addEventListener(
+ "input",
+ ()=>{
+  pitchValue.textContent =
+   Number(pitch.value).toFixed(2);
+ }
+);
+
+
+/* =========================================================
+   LOAD HINDI VOICES
+   ========================================================= */
+
+function getHindiVoices(){
+
+ return speechSynthesis
+   .getVoices()
+   .filter(v =>
+     v.lang &&
+     v.lang.toLowerCase()
+       .startsWith("hi")
+   );
+
+}
+
+
+function loadVoices(){
+
+ voices =
+  getHindiVoices();
+
+ browserVoice.innerHTML="";
+
+
+ if(!voices.length){
+
+  browserVoice.innerHTML =
+   "<option>No Hindi voice found</option>";
+
+  status.textContent =
+   "⚠ No Hindi browser voice was found. Install/enable a Hindi TTS voice on your device.";
+
+  return;
+ }
+
+
+ voices.forEach(
+  (voice,index)=>{
+
+   const option =
+    document.createElement("option");
+
+   option.value=index;
+
+   option.textContent =
+    voice.name+
+    " — "+
+    voice.lang;
+
+   browserVoice.appendChild(
+    option
+   );
+
+  }
+ );
+
+
+ status.textContent =
+  voices.length+
+  " Hindi voice(s) found.";
+
+}
+
+speechSynthesis.onvoiceschanged =
+ loadVoices;
+
+loadVoices();
+
+
+/* =========================================================
+   SELECT MALE / FEMALE
+   ========================================================= */
+
+document
+ .querySelectorAll(".voice")
+ .forEach(button=>{
+
+  button.addEventListener(
+   "click",
+   ()=>{
+
+    document
+     .querySelectorAll(".voice")
+     .forEach(b =>
+      b.classList.remove("selected")
+     );
+
+    button.classList.add(
+     "selected"
+    );
+
+    gender =
+     button.dataset.gender;
+
+    selectBestVoice();
+
+   }
+  );
+
+ });
+
+
+/* =========================================================
+   FIND BEST AVAILABLE VOICE
+   ========================================================= */
+
+function selectBestVoice(){
+
+ if(!voices.length)
+   return;
+
+
+ /*
+   Browser voice names are NOT guaranteed to expose
+   gender information.
+
+   We therefore search common male/female indicators,
+   but never pretend a female voice is male.
+ */
+
+ const maleWords = [
+  "male",
+  "man",
+  "aarav",
+  "arjun",
+  "ravi",
+  "rahul",
+  "rohit",
+  "amit",
+  "raj"
+ ];
+
+ const femaleWords = [
+  "female",
+  "woman",
+  "ananya",
+  "aarti",
+  "kavya",
+  "neha",
+  "priya",
+  "pooja"
+ ];
+
+ const words =
+  gender==="male"
+   ? maleWords
+   : femaleWords;
+
+
+ let found =
+  voices.find(
+   voice =>
+    words.some(
+     word =>
+      voice.name
+       .toLowerCase()
+       .includes(word)
+    )
+  );
+
+
+ if(found){
+
+  const index =
+   voices.indexOf(found);
+
+  browserVoice.value =
+   index;
+
+  status.textContent =
+   "✓ "+gender+
+   " Hindi voice selected: "+
+   found.name;
+
+ }else{
+
+  status.textContent =
+   "⚠ No separately identified "+
+   gender+
+   " Hindi browser voice was found. "+
+   "Your device/browser may provide only one Hindi voice.";
+
+ }
+
+}
+
+
+/* =========================================================
+   BROWSER PREVIEW
+   ========================================================= */
+
+function previewVoice(){
+
+ const value =
+  text.value.trim();
+
+ if(!value){
+
+  status.textContent =
+   "Please enter Hindi script.";
+
+  return;
+
+ }
+
+
+ if(!voices.length){
+
+  status.textContent =
+   "No Hindi voice available.";
+
+  return;
+
+ }
+
+
+ const selected =
+  voices[
+   Number(browserVoice.value)
+  ];
+
+
+ speechSynthesis.cancel();
+
+
+ const utterance =
+  new SpeechSynthesisUtterance(
+   value
+  );
+
+
+ utterance.voice =
+  selected;
+
+ utterance.lang =
+  "hi-IN";
+
+ utterance.rate =
+  Number(speed.value);
+
+ utterance.pitch =
+  Number(pitch.value);
+
+
+ wave.classList.add(
+  "playing"
+ );
+
+
+ status.textContent =
+  "🔊 Speaking with "+
+  selected.name+"...";
+
+
+ utterance.onend =
+  ()=>{
+   wave.classList.remove(
+    "playing"
+   );
+
+   status.textContent =
+    "✓ Voice finished.";
+  };
+
+
+ utterance.onerror =
+  ()=>{
+   wave.classList.remove(
+    "playing"
+   );
+
+   status.textContent =
+    "✕ Browser voice error.";
+  };
+
+
+ speechSynthesis.speak(
+  utterance
+ );
+
+}
+
+
+/* PREVIEW */
+
+document
+ .getElementById("preview")
+ .addEventListener(
+  "click",
+  previewVoice
+ );
+
+
+/* =========================================================
+   GENERATE
+   ========================================================= */
+
+document
+ .getElementById("generate")
+ .addEventListener(
+  "click",
+  async()=>{
+
+   const value =
+    text.value.trim();
+
+   if(!value){
+
+    status.textContent =
+     "Please enter Hindi script.";
+
+    return;
+
+   }
+
+
+   /*
+     REAL AI TTS ENDPOINT
+
+     Backend must accept:
+
+     POST /api/tts
+
+     {
+       text,
+       language,
+       gender,
+       speed,
+       pitch
+     }
+
+     Backend must return:
+     audio/mpeg OR audio/wav
+   */
+
+   status.textContent =
+    "⏳ Trying AI TTS engine...";
+
+
+   try{
+
+    const response =
+     await fetch(
+      "/api/tts",
+      {
+       method:"POST",
+
+       headers:{
+        "Content-Type":
+         "application/json"
+       },
+
+       body:JSON.stringify({
+
+        text:value,
+
+        language:"hi-IN",
+
+        gender:gender,
+
+        speed:
+         Number(speed.value),
+
+        pitch:
+         Number(pitch.value)
+
+       })
+      }
+     );
+
+
+    if(!response.ok)
+     throw new Error(
+      "Backend unavailable"
+     );
+
+
+    const blob =
+     await response.blob();
+
+
+    if(!blob.type.startsWith("audio"))
+     throw new Error(
+      "Invalid audio response"
+     );
+
+
+    audioBlob =
+     blob;
+
+
+    audio.src =
+     URL.createObjectURL(
+      blob
+     );
+
+    audio.style.display =
+     "block";
+
+
+    mp3.disabled=false;
+    wav.disabled=false;
+
+
+    status.textContent =
+     "✓ Real AI voice generated.";
+
+   }
+
+   catch(error){
+
+    /*
+      Backend अभी connected नहीं है.
+      इसलिए browser preview चलेगा.
+    */
+
+    status.textContent =
+     "AI backend not connected — using Hindi browser preview.";
+
+    previewVoice();
+
+   }
+
+  }
+ );
+
+
+/* =========================================================
+   STOP
+   ========================================================= */
+
+document
+ .getElementById("stop")
+ .addEventListener(
+  "click",
+  ()=>{
+
+   speechSynthesis.cancel();
+
+   audio.pause();
+
+   wave.classList.remove(
+    "playing"
+   );
+
+   status.textContent =
+    "Stopped.";
+
+  }
+ );
+
+
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+function downloadFile(
+ blob,
+ filename
+){
+
+ if(!blob){
+
+  alert(
+   "Generate an AI audio file first."
+  );
+
+  return;
+
+ }
+
+
+ const url =
+  URL.createObjectURL(
+   blob
+  );
+
+ const a =
+  document.createElement("a");
+
+ a.href=url;
+ a.download=filename;
+
+ document.body.appendChild(a);
+
+ a.click();
+
+ a.remove();
+
+ setTimeout(
+  ()=>URL.revokeObjectURL(url),
+  1000
+ );
+
+}
+
+
+mp3.addEventListener(
+ "click",
+ ()=>{
+
+  downloadFile(
+   audioBlob,
+   "hindi-ai-voice.mp3"
+  );
+
+ }
+);
+
+
+wav.addEventListener(
+ "click",
+ ()=>{
+
+  downloadFile(
+   audioBlob,
+   "hindi-ai-voice.wav"
+  );
+
+ }
+);
+
+</script>
+
+</body>
+  </html>
