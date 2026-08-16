@@ -1,22 +1,947 @@
-⚙️ SETTINGS
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Voice AI Studio</title>
 
-Website Title       [ Hindi Voice AI Studio ]
-Subtitle             [ Hindi Text → Natural Voice ]
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,Helvetica,sans-serif;
+ background:#07101d;
+ color:#fff;
+}
+.app{max-width:1200px;margin:auto;padding:18px}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:16px 4px 22px;
+}
+.logo{font-size:24px;font-weight:800}
+.logo span{color:#22d3ee}
+.settingsBtn{
+ background:#17243a;color:white;border:1px solid #33445f;
+ border-radius:10px;padding:11px 15px;cursor:pointer;
+}
+.grid{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 360px;
+ gap:18px;
+}
+.card{
+ background:#101b2d;
+ border:1px solid #263854;
+ border-radius:18px;
+ padding:20px;
+}
+h1{margin:0 0 6px;font-size:26px}
+.sub{color:#94a3b8;margin-bottom:20px}
+label{
+ display:block;color:#cbd5e1;
+ font-size:13px;margin:14px 0 7px;
+}
+textarea{
+ width:100%;min-height:210px;
+ resize:vertical;
+ padding:15px;
+ border-radius:13px;
+ border:1px solid #334155;
+ background:#07101d;
+ color:#fff;
+ font-size:17px;
+ line-height:1.6;
+ outline:none;
+}
+textarea:focus{border-color:#22d3ee}
+.row{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+select,input{
+ width:100%;
+ padding:12px;
+ border-radius:10px;
+ border:1px solid #334155;
+ background:#07101d;
+ color:#fff;
+}
+.voices{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+.voice{
+ background:#0a1423;
+ color:white;
+ border:1px solid #334155;
+ border-radius:14px;
+ padding:16px;
+ cursor:pointer;
+ text-align:left;
+}
+.voice.active{
+ border-color:#22d3ee;
+ background:#10283a;
+}
+.voice strong{display:block;font-size:16px}
+.voice small{display:block;color:#94a3b8;margin-top:6px}
+.buttons{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:18px;
+}
+button{
+ font-weight:800;
+ font-size:15px;
+}
+.action{
+ border:0;
+ border-radius:11px;
+ padding:14px;
+ color:#fff;
+ cursor:pointer;
+}
+.generate{background:#16a34a}
+.stop{background:#dc2626}
+.download{background:#2563eb}
+.download:disabled{
+ opacity:.35;
+ cursor:not-allowed;
+}
+.audio{
+ width:100%;
+ margin-top:18px;
+}
+.status{
+ margin-top:15px;
+ padding:13px;
+ border-radius:10px;
+ background:#07101d;
+ border:1px solid #263854;
+ color:#a7f3d0;
+ font-size:13px;
+ line-height:1.5;
+}
+.wave{
+ height:125px;
+ border-radius:14px;
+ background:#07101d;
+ border:1px solid #263854;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:4px;
+ margin-top:12px;
+ overflow:hidden;
+}
+.bar{
+ width:4px;height:20px;
+ background:#22d3ee;
+ border-radius:5px;
+}
+.wave.playing .bar{
+ animation:wave .5s infinite alternate;
+}
+@keyframes wave{
+ from{height:15px}
+ to{height:90px}
+}
+.settings{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.75);
+ z-index:20;
+ padding:20px;
+ overflow:auto;
+}
+.settingsBox{
+ max-width:600px;
+ margin:30px auto;
+ background:#101b2d;
+ border:1px solid #33445f;
+ border-radius:18px;
+ padding:20px;
+}
+.close{
+ float:right;
+ background:#263449;
+ color:white;
+ border:0;
+ border-radius:8px;
+ padding:8px 12px;
+ cursor:pointer;
+}
+.note{
+ font-size:12px;
+ color:#94a3b8;
+ line-height:1.5;
+}
+.save{
+ width:100%;
+ margin-top:15px;
+ background:#7c3aed;
+ border:0;
+ color:white;
+ padding:14px;
+ border-radius:10px;
+ cursor:pointer;
+}
+@media(max-width:850px){
+ .grid{grid-template-columns:1fr}
+}
+@media(max-width:550px){
+ .row,.voices,.buttons{grid-template-columns:1fr}
+ .app{padding:10px}
+ .card{padding:15px}
+}
+</style>
+</head>
 
-🎨 Appearance
-Theme                [ Dark ]
-Accent Color         [ Blue ]
+<body>
 
-🎙️ Voice
-Language             [ Hindi — India ]
-Voice                [ Available voices ]
-Speed                [ 1.00x ]
-Pitch                 [ 1.00 ]
+<div class="app">
 
-🔘 Buttons
-Generate Voice       [ ON ]
-Stop                 [ ON ]
-Download             [ ON ]
+<header>
+ <div class="logo">🎙️ <span>VOICE.AI</span> Hindi Studio</div>
+ <button class="settingsBtn" onclick="openSettings()">⚙️ Settings</button>
+</header>
 
+
+<div class="grid">
+
+<section class="card">
+
+<h1>AI Voice Generator</h1>
+<div class="sub">Hindi Text → Natural Indian AI Voice</div>
+
+
+<label>Hindi Script</label>
+
+<textarea id="text">नमस्ते! यह हमारी हिंदी AI voice testing है। अगर आप सफल होना चाहते हैं, तो हर दिन कुछ नया सीखिए, अपनी skills को बेहतर बनाइए और अपने लक्ष्य की तरफ लगातार आगे बढ़ते रहिए।</textarea>
+
+
+<div class="row">
+
+<div>
+<label>Language</label>
+<select id="language">
+<option value="hi-IN">Hindi — India</option>
+</select>
+</div>
+
+<div>
+<label>Output Format</label>
+<select id="format">
+<option value="mp3">MP3</option>
+<option value="wav">WAV</option>
+</select>
+</div>
+
+</div>
+
+
+<label>Indian Natural Voice</label>
+
+<div class="voices">
+
+<button class="voice active" id="maleBtn" onclick="chooseVoice('male')">
+<strong>👨 Indian Male</strong>
+<small>hi-IN-MadhurNeural</small>
+</button>
+
+<button class="voice" id="femaleBtn" onclick="chooseVoice('female')">
+<strong>👩 Indian Female</strong>
+<small>hi-IN-SwaraNeural</small>
+</button>
+
+</div>
+
+
+<div class="row">
+
+<div>
+<label>Speaking Speed</label>
+<input id="rate" type="range" min="0.7" max="1.3" step="0.05" value="1">
+</div>
+
+<div>
+<label>Voice Pitch</label>
+<input id="pitch" type="range" min="-20" max="20" step="1" value="0">
+</div>
+
+</div>
+
+
+<div class="buttons">
+
+<button class="action generate" onclick="generateVoice()">
+▶ Generate Voice
+</button>
+
+<button class="action stop" onclick="stopAudio()">
+■ Stop
+</button>
+
+</div>
+
+
+<div id="status" class="status">
+Ready. Add your Azure Speech API key in Settings.
+</div>
+
+</section>
+
+
+<aside class="card">
+
+<h2>🔊 Audio Output</h2>
+
+<div class="sub">Generated audio</div>
+
+
+<div id="wave" class="wave">
+
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+
+</div>
+
+
+<audio id="audio" class="audio" controls></audio>
+
+
+<div class="buttons">
+
+<button id="downloadBtn"
+ class="action download"
+ disabled
+ onclick="downloadAudio()">
+⬇ Download
+</button>
+
+<button class="action download" onclick="testBrowserVoice()">
+🔊 Browser Test
+</button>
+
+</div>
+
+
+<div id="outputStatus" class="status">
+No audio generated yet.
+</div>
+
+</aside>
+
+</div>
+</div>
+
+
+
+<!-- SETTINGS -->
+
+<div id="settings" class="settings">
+
+<div class="settingsBox">
+
+<button class="close" onclick="closeSettings()">✕</button>
+
+<h2>⚙️ Voice API Settings</h2>
+
+<p class="note">
+These settings are saved only in this browser.
+Do not publish your API key inside public source code.
+</p>
+
+
+<label>Azure Speech API Key</label>
+
+<input
+id="apiKey"
+type="password"
+placeholder="Paste your Speech resource key">
+
+
+<label>Azure Speech Endpoint</label>
+
+<input
+id="endpoint"
+type="text"
+placeholder="https://YOUR-RESOURCE.cognitiveservices.azure.com">
+
+
+<label>Azure Region (optional)</label>
+
+<input
+id="region"
+type="text"
+placeholder="centralindia">
+
+
+<p class="note">
+You can enter your complete Speech resource endpoint above.
+If you enter only a region, the app will build the standard TTS endpoint.
+</p>
+
+
+<button class="save" onclick="saveSettings()">
 💾 Save Settings
-↩ Reset Settings
+</button>
+
+</div>
+</div>
+
+
+
+<script>
+
+let selectedVoice = "male";
+let audioBlob = null;
+let audioUrl = null;
+
+
+/* ---------------- SETTINGS ---------------- */
+
+function loadSettings(){
+
+ const key = localStorage.getItem("azureSpeechKey");
+ const endpoint = localStorage.getItem("azureSpeechEndpoint");
+ const region = localStorage.getItem("azureSpeechRegion");
+
+ if(key) document.getElementById("apiKey").value = key;
+ if(endpoint) document.getElementById("endpoint").value = endpoint;
+ if(region) document.getElementById("region").value = region;
+
+}
+
+function openSettings(){
+ document.getElementById("settings").style.display="block";
+}
+
+function closeSettings(){
+ document.getElementById("settings").style.display="none";
+}
+
+function saveSettings(){
+
+ const key =
+ document.getElementById("apiKey").value.trim();
+
+ const endpoint =
+ document.getElementById("endpoint").value.trim();
+
+ const region =
+ document.getElementById("region").value.trim();
+
+ if(key)
+ localStorage.setItem("azureSpeechKey",key);
+
+ if(endpoint)
+ localStorage.setItem("azureSpeechEndpoint",endpoint);
+
+ if(region)
+ localStorage.setItem("azureSpeechRegion",region);
+
+ setStatus("API settings saved in this browser.","ok");
+
+ closeSettings();
+
+}
+
+
+/* ---------------- VOICE ---------------- */
+
+function chooseVoice(type){
+
+ selectedVoice = type;
+
+ document.getElementById("maleBtn")
+ .classList.toggle("active",type==="male");
+
+ document.getElementById("femaleBtn")
+ .classList.toggle("active",type==="female");
+
+ const name =
+ type==="male"
+ ? "Indian Male — hi-IN-MadhurNeural"
+ : "Indian Female — hi-IN-SwaraNeural";
+
+ setStatus(name+" selected.","ok");
+
+}
+
+
+/* ---------------- ENDPOINT ---------------- */
+
+function getEndpoint(){
+
+ const custom =
+ localStorage.getItem("azureSpeechEndpoint");
+
+ const region =
+ localStorage.getItem("azureSpeechRegion");
+
+ if(custom){
+
+ let ep = custom.trim();
+
+ ep = ep.replace(/\/+$/,"");
+
+ if(ep.endsWith("/cognitiveservices/v1"))
+ return ep;
+
+ if(ep.includes("tts.speech.microsoft.com"))
+ return ep + "/cognitiveservices/v1";
+
+ return ep + "/tts/cognitiveservices/v1";
+
+ }
+
+ if(region){
+
+ return
+ "https://" +
+ region.trim() +
+ ".tts.speech.microsoft.com/cognitiveservices/v1";
+
+ }
+
+ return "";
+
+}
+
+
+/* ---------------- SSML ---------------- */
+
+function escapeXML(text){
+
+ return text
+ .replace(/&/g,"&amp;")
+ .replace(/</g,"&lt;")
+ .replace(/>/g,"&gt;")
+ .replace(/"/g,"&quot;")
+ .replace(/'/g,"&apos;");
+
+}
+
+
+function buildSSML(){
+
+ const text =
+ escapeXML(
+ document.getElementById("text").value.trim()
+ );
+
+ const rate =
+ Number(document.getElementById("rate").value);
+
+ const pitch =
+ Number(document.getElementById("pitch").value);
+
+ const voice =
+ selectedVoice==="male"
+ ? "hi-IN-MadhurNeural"
+ : "hi-IN-SwaraNeural";
+
+ const ratePercent =
+ Math.round((rate-1)*100);
+
+ const rateString =
+ (ratePercent>=0 ? "+" : "") +
+ ratePercent +
+ "%";
+
+ const pitchString =
+ (pitch>=0 ? "+" : "") +
+ pitch +
+ "Hz";
+
+ return `
+<speak version="1.0"
+ xml:lang="hi-IN"
+ xmlns="http://www.w3.org/2001/10/synthesis">
+
+<voice name="${voice}">
+
+<prosody
+ rate="${rateString}"
+ pitch="${pitchString}">
+
+${text}
+
+</prosody>
+
+</voice>
+
+</speak>
+`;
+
+}
+
+
+/* ---------------- GENERATE ---------------- */
+
+async function generateVoice(){
+
+ const text =
+ document.getElementById("text").value.trim();
+
+ if(!text){
+
+ setStatus("Please enter Hindi text first.","error");
+ return;
+
+ }
+
+
+ const key =
+ localStorage.getItem("azureSpeechKey");
+
+ if(!key){
+
+ openSettings();
+
+ setStatus(
+ "API key missing. Open Settings and add your Azure Speech key.",
+ "error"
+ );
+
+ return;
+
+ }
+
+
+ const endpoint =
+ getEndpoint();
+
+ if(!endpoint){
+
+ openSettings();
+
+ setStatus(
+ "Speech endpoint/region missing.",
+ "error"
+ );
+
+ return;
+
+ }
+
+
+ const format =
+ document.getElementById("format").value;
+
+ let outputFormat;
+
+ if(format==="mp3"){
+
+ outputFormat =
+ "audio-24khz-160kbitrate-mono-mp3";
+
+ }else{
+
+ outputFormat =
+ "riff-24khz-16bit-mono-pcm";
+
+ }
+
+
+ setStatus(
+ "Generating real AI voice...",
+ "ok"
+ );
+
+ document.getElementById("wave")
+ .classList.add("playing");
+
+ document.getElementById("downloadBtn")
+ .disabled=true;
+
+
+ try{
+
+ const response =
+ await fetch(endpoint,{
+
+ method:"POST",
+
+ headers:{
+   "Ocp-Apim-Subscription-Key":key,
+   "Content-Type":"application/ssml+xml",
+   "X-Microsoft-OutputFormat":outputFormat,
+   "User-Agent":"Hindi-Voice-AI-Studio"
+ },
+
+ body:buildSSML()
+
+ });
+
+
+ if(!response.ok){
+
+ const errorText =
+ await response.text();
+
+ throw new Error(
+ "HTTP " +
+ response.status +
+ ": " +
+ errorText.slice(0,300)
+ );
+
+ }
+
+
+ const blob =
+ await response.blob();
+
+ audioBlob = blob;
+
+
+ if(audioUrl){
+ URL.revokeObjectURL(audioUrl);
+ }
+
+ audioUrl =
+ URL.createObjectURL(blob);
+
+
+ const audio =
+ document.getElementById("audio");
+
+ audio.src =
+ audioUrl;
+
+ audio.load();
+
+ document.getElementById("downloadBtn")
+ .disabled=false;
+
+
+ setStatus(
+ "✅ Voice generated successfully. Press Play or Download.",
+ "ok"
+ );
+
+ document.getElementById("outputStatus")
+ .innerHTML =
+ "✅ Real audio generated<br>" +
+ "Voice: " +
+ (
+ selectedVoice==="male"
+ ? "Indian Male"
+ : "Indian Female"
+ ) +
+ "<br>Format: " +
+ format.toUpperCase();
+
+
+ }catch(error){
+
+ console.error(error);
+
+ setStatus(
+ "❌ Voice generation failed.<br><br>" +
+ error.message +
+ "<br><br>" +
+ "Check your API key, endpoint/region and Azure Speech resource.",
+ "error"
+ );
+
+ document.getElementById("outputStatus")
+ .textContent =
+ "No audio was created.";
+
+ }finally{
+
+ document.getElementById("wave")
+ .classList.remove("playing");
+
+ }
+
+}
+
+
+/* ---------------- DOWNLOAD ---------------- */
+
+function downloadAudio(){
+
+ if(!audioBlob || !audioUrl){
+
+ setStatus(
+ "Generate the voice first.",
+ "error"
+ );
+
+ return;
+
+ }
+
+
+ const format =
+ document.getElementById("format").value;
+
+ const filename =
+ "hindi-ai-voice-" +
+ Date.now() +
+ "." +
+ format;
+
+
+ const link =
+ document.createElement("a");
+
+ link.href =
+ audioUrl;
+
+ link.download =
+ filename;
+
+ document.body.appendChild(link);
+
+ link.click();
+
+ link.remove();
+
+
+ setStatus(
+ "✅ Download started: " +
+ filename,
+ "ok"
+ );
+
+}
+
+
+/* ---------------- STOP ---------------- */
+
+function stopAudio(){
+
+ const audio =
+ document.getElementById("audio");
+
+ audio.pause();
+
+ audio.currentTime=0;
+
+ document.getElementById("wave")
+ .classList.remove("playing");
+
+ if("speechSynthesis" in window)
+ window.speechSynthesis.cancel();
+
+}
+
+
+/* ---------------- BROWSER FALLBACK TEST ---------------- */
+
+function testBrowserVoice(){
+
+ if(!("speechSynthesis" in window)){
+
+ setStatus(
+ "This browser does not support browser speech.",
+ "error"
+ );
+
+ return;
+
+ }
+
+
+ const text =
+ document.getElementById("text").value.trim();
+
+ if(!text){
+
+ setStatus(
+ "Enter some Hindi text first.",
+ "error"
+ );
+
+ return;
+
+ }
+
+
+ window.speechSynthesis.cancel();
+
+ const utterance =
+ new SpeechSynthesisUtterance(text);
+
+ utterance.lang="hi-IN";
+
+ utterance.rate =
+ Number(document.getElementById("rate").value);
+
+ utterance.pitch=1;
+
+ utterance.onstart=()=>{
+   setStatus(
+   "🔊 Browser voice test is speaking...",
+   "ok"
+   );
+ };
+
+ utterance.onend=()=>{
+   setStatus(
+   "Browser voice test finished.",
+   "ok"
+   );
+ };
+
+ utterance.onerror=(e)=>{
+   setStatus(
+   "Browser voice error: "+e.error,
+   "error"
+   );
+ };
+
+ window.speechSynthesis.speak(
+ utterance
+ );
+
+}
+
+
+/* ---------------- STATUS ---------------- */
+
+function setStatus(message,type){
+
+ const box =
+ document.getElementById("status");
+
+ box.innerHTML=message;
+
+ if(type==="error")
+ box.style.color="#fca5a5";
+ else
+ box.style.color="#a7f3d0";
+
+}
+
+
+/* ---------------- START ---------------- */
+
+loadSettings();
+
+</script>
+
+</body>
+                                                   </html>
