@@ -961,3 +961,477 @@
 
 </body>
   </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hindi Voice Engine Test</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  background:#08111f;
+  color:white;
+  padding:20px;
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#94a3b8;
+  margin-bottom:25px;
+}
+
+.box{
+  background:#101b2d;
+  border:1px solid #263854;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:16px;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  color:#cbd5e1;
+}
+
+textarea{
+  width:100%;
+  min-height:170px;
+  resize:vertical;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #334155;
+  background:#07101d;
+  color:white;
+  font-size:17px;
+  line-height:1.6;
+  outline:none;
+}
+
+textarea:focus{
+  border-color:#22d3ee;
+}
+
+select{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid #334155;
+  background:#07101d;
+  color:white;
+  font-size:15px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:15px;
+}
+
+button{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:15px;
+  font-size:16px;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+.speak{
+  background:#16a34a;
+}
+
+.stop{
+  background:#dc2626;
+}
+
+.refresh{
+  background:#2563eb;
+}
+
+.status{
+  padding:15px;
+  background:#07101d;
+  border:1px solid #263854;
+  border-radius:12px;
+  margin-top:15px;
+  color:#a7f3d0;
+  line-height:1.5;
+}
+
+.voice-count{
+  color:#67e8f9;
+  font-weight:bold;
+}
+
+@media(max-width:550px){
+  .row{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎙️ Hindi Voice Engine</h1>
+
+<div class="subtitle">
+Real Browser Voice Test
+</div>
+
+
+<div class="box">
+
+<label>Hindi Text</label>
+
+<textarea id="text">नमस्ते! यह हिंदी आवाज़ की टेस्टिंग है। अगर आपको मेरी आवाज़ सुनाई दे रही है, तो हमारा voice engine सही तरीके से काम कर रहा है।</textarea>
+
+
+<div class="row">
+
+<div>
+<label>Voice</label>
+
+<select id="voiceSelect">
+<option>Loading voices...</option>
+</select>
+</div>
+
+
+<div>
+<label>Language</label>
+
+<select id="language">
+<option value="hi-IN">Hindi — India</option>
+</select>
+
+</div>
+
+</div>
+
+
+<div class="row">
+
+<div>
+<label>Speed</label>
+
+<select id="rate">
+<option value="0.75">0.75x</option>
+<option value="0.9">0.90x</option>
+<option value="1" selected>1.00x</option>
+<option value="1.1">1.10x</option>
+<option value="1.25">1.25x</option>
+</select>
+</div>
+
+
+<div>
+<label>Pitch</label>
+
+<select id="pitch">
+<option value="0.8">0.80</option>
+<option value="0.9">0.90</option>
+<option value="1" selected>1.00</option>
+<option value="1.1">1.10</option>
+<option value="1.2">1.20</option>
+</select>
+</div>
+
+</div>
+
+
+<button class="refresh" onclick="loadVoices()">
+🔄 Detect Voices
+</button>
+
+<button class="speak" onclick="speak()">
+▶️ Generate / Speak Voice
+</button>
+
+<button class="stop" onclick="stopVoice()">
+⏹ Stop Voice
+</button>
+
+
+<div class="status" id="status">
+Checking browser voice engine...
+</div>
+
+</div>
+
+
+<div class="box">
+
+<strong>Detected Voices</strong>
+
+<p>
+Available voices:
+<span class="voice-count" id="voiceCount">0</span>
+</p>
+
+<p style="color:#94a3b8;font-size:13px;line-height:1.5;">
+इस list में आपके device/browser की वास्तविक voices दिखाई देंगी।
+अगर Hindi voice उपलब्ध है, तो उसका नाम यहाँ दिखाई देगा।
+</p>
+
+</div>
+
+</div>
+
+
+<script>
+
+let voices = [];
+
+const voiceSelect =
+document.getElementById("voiceSelect");
+
+const statusBox =
+document.getElementById("status");
+
+const voiceCount =
+document.getElementById("voiceCount");
+
+
+function loadVoices(){
+
+if(!("speechSynthesis" in window)){
+
+statusBox.innerHTML =
+"❌ आपके browser में Speech Synthesis उपलब्ध नहीं है.";
+
+return;
+
+}
+
+
+voices =
+window.speechSynthesis.getVoices();
+
+
+if(voices.length === 0){
+
+statusBox.innerHTML =
+"⏳ Voices अभी load हो रही हैं। थोड़ी देर बाद Detect Voices दबाएँ.";
+
+return;
+
+}
+
+
+voiceSelect.innerHTML = "";
+
+
+let hindiVoices = [];
+
+voices.forEach((voice,index)=>{
+
+const option =
+document.createElement("option");
+
+option.value = index;
+
+option.textContent =
+voice.name +
+" — " +
+voice.lang;
+
+voiceSelect.appendChild(option);
+
+
+if(
+voice.lang.toLowerCase() === "hi-in" ||
+voice.lang.toLowerCase().startsWith("hi")
+){
+
+hindiVoices.push(index);
+
+}
+
+});
+
+
+voiceCount.textContent =
+voices.length;
+
+
+if(hindiVoices.length > 0){
+
+voiceSelect.value =
+hindiVoices[0];
+
+statusBox.innerHTML =
+"✅ Hindi voice मिली: " +
+voices[hindiVoices[0]].name;
+
+}else{
+
+statusBox.innerHTML =
+"⚠️ Hindi voice नहीं मिली। नीचे दिखाई देने वाली available voice से test कर सकते हैं.";
+
+}
+
+}
+
+
+function speak(){
+
+if(!("speechSynthesis" in window)){
+
+statusBox.innerHTML =
+"❌ Speech engine इस browser में उपलब्ध नहीं है.";
+
+return;
+
+}
+
+
+const text =
+document.getElementById("text").value.trim();
+
+
+if(!text){
+
+statusBox.innerHTML =
+"⚠️ पहले Hindi text डालें.";
+
+return;
+
+}
+
+
+if(voices.length === 0){
+
+loadVoices();
+
+setTimeout(speak,500);
+
+return;
+
+}
+
+
+window.speechSynthesis.cancel();
+
+
+const selectedIndex =
+Number(voiceSelect.value);
+
+
+const selectedVoice =
+voices[selectedIndex];
+
+
+const utterance =
+new SpeechSynthesisUtterance(text);
+
+
+utterance.voice =
+selectedVoice;
+
+
+utterance.lang =
+"hi-IN";
+
+
+utterance.rate =
+Number(document.getElementById("rate").value);
+
+
+utterance.pitch =
+Number(document.getElementById("pitch").value);
+
+
+utterance.onstart =
+function(){
+
+statusBox.innerHTML =
+"🔊 Speaking...<br>" +
+"Voice: " +
+selectedVoice.name +
+"<br>Language: " +
+selectedVoice.lang;
+
+};
+
+
+utterance.onend =
+function(){
+
+statusBox.innerHTML =
+"✅ Voice finished.";
+
+};
+
+
+utterance.onerror =
+function(event){
+
+statusBox.innerHTML =
+"❌ Voice error: " +
+event.error;
+
+};
+
+
+window.speechSynthesis.speak(
+utterance
+);
+
+}
+
+
+function stopVoice(){
+
+if("speechSynthesis" in window){
+
+window.speechSynthesis.cancel();
+
+statusBox.innerHTML =
+"⏹ Voice stopped.";
+
+}
+
+}
+
+
+window.speechSynthesis.onvoiceschanged =
+loadVoices;
+
+
+loadVoices();
+
+setTimeout(loadVoices,1000);
+
+setTimeout(loadVoices,3000);
+
+</script>
+
+</body>
+</html>
